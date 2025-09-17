@@ -13,6 +13,7 @@ load_dotenv()
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ASSEMBLYAI_KEY = os.getenv("ASSEMBLYAI_KEY")
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 
 def process_audio(audio_file):
@@ -24,7 +25,7 @@ def process_audio(audio_file):
         text = transcription_response.text
        
     
-    correct_sentence = generate_ai_response(text)
+    correct_sentence = generate_ai_response_Gemini(text)
     print("correct_sentence")
     print(correct_sentence)
     correct_sentence_audio_path = text_to_speech(correct_sentence)
@@ -41,7 +42,7 @@ def text_to_speech(text):
         api_key=ELEVENLABS_API_KEY,
     )
     response = elevenlabs.text_to_speech.convert(
-        voice_id="sKbENBhYzuhlea1aqZ3J", 
+        voice_id="3sWiBfwPqw7lQWQkCbej", 
         output_format="mp3_22050_32",
         text=text,
         model_id="eleven_turbo_v2_5", # use the turbo model for low latency
@@ -82,8 +83,23 @@ def generate_ai_response(transcript):
 
     ai_response = response.choices[0].message.content
     return ai_response
-        
 
+def generate_ai_response_Gemini(transcript):
+    
+    full_transcript = [
+        {"role":"system", "content":"You are an expert English language tutor and grammar correction agent. Your sole purpose is to receive a spoken utterance from the user, analyze it for grammatical errors, unnatural phrasing, and poor sentence structure, and return only the **single, corrected version of the user's sentence**. Do not offer explanations, commentary,  Only output the corrected sentence. If the user's input is perfectly correct, repeat the input sentence back exactly."}
+    ]
+    full_transcript.append({"role":"user", "content": transcript})
+        
+    gemini = OpenAI(api_key=GOOGLE_API_KEY, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
+    model_name = "gemini-2.0-flash"
+
+    response = gemini.chat.completions.create(model=model_name, messages=full_transcript)
+    ai_response = response.choices[0].message.content
+    return ai_response
+    
+
+        
 def audio_transcription(audio_file):
     aai.settings.api_key = ASSEMBLYAI_KEY
     transcriber = aai.Transcriber()

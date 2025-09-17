@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../LangTranslatorAIAgent"
+		},
+		{
+			"path": "../Vineet Agents/OpenAI POC"
+		},
+		{
+			"path": "../Vineet Agents/Gemini_POC"
+		}
+	],
+	"settings": {}
+}
