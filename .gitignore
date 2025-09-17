@@ -2,3 +2,6 @@
 .gradio
 __pycache__
 *.mp3
+.DS_Store
+voiceagent.code-workspace
+
